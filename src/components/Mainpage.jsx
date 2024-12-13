@@ -9,6 +9,7 @@ const Mainpage = () => {
     const [imgarray, setImgArray] = useState([])
     const [sliderValue, setSliderValue] = useState(0)
     const [prevvalue, setPrevValue] = useState(0)
+    const [format, setFormat] = useState('png')
 
     const handleImageData = (e) => {
         const file = e.target.files[0]
@@ -51,54 +52,41 @@ const Mainpage = () => {
         cropper.rotate(sliderValue - prevvalue)
         setPrevValue(sliderValue)
     }
-
     const handleDownload = () => {
-      const cropper = cropperRef.current?.cropper;
-      if (cropper) {
-          const canvas = cropper.getCroppedCanvas({
-              fillColor: 'transparent', // Set transparent background
-          });
-  
-          const rotationAngle = cropper.getData().rotate || 0; // Get rotation angle
-  
-          if (canvas) {
-              // Calculate dimensions for the rotated canvas
-              const rotatedCanvas = document.createElement('canvas');
-              const context = rotatedCanvas.getContext('2d');
-              
-              // Set rotated canvas size to accommodate the rotated image
-              const angleInRadians = (rotationAngle * Math.PI) / 180;
-              const absCos = Math.abs(Math.cos(angleInRadians));
-              const absSin = Math.abs(Math.sin(angleInRadians));
-              rotatedCanvas.width = canvas.width * absCos + canvas.height * absSin;
-              rotatedCanvas.height = canvas.width * absSin + canvas.height * absCos;
-  
-              // Apply rotation to the context
-              context.translate(rotatedCanvas.width / 2, rotatedCanvas.height / 2);
-              context.rotate(angleInRadians);
-              context.translate(-canvas.width / 2, -canvas.height / 2);
-  
-              // Clear the background to ensure transparency
-              context.clearRect(0, 0, rotatedCanvas.width, rotatedCanvas.height);
-  
-              // Draw the original cropped canvas onto the rotated context
-              context.drawImage(canvas, 0, 0);
-  
-              // Create the download link
-              const link = document.createElement('a');
-              link.href = rotatedCanvas.toDataURL('image/png'); // Save as PNG for transparency
-              link.download = 'cropped-rotated-image.png';
-              link.click();
-          }
-      }
-  };
+        if (image) {
+
+            let mimeType;
+            let fileExtension;
+
+            if (format === 'jpg') {
+                mimeType = 'image/jpeg';
+                fileExtension = 'jpg';
+            } else if (format === 'webp') {
+                mimeType = 'image/webp';
+                fileExtension = 'webp';
+            } else {
+                mimeType = 'image/png';
+                fileExtension = 'png';
+            }
+
+            const link = document.createElement('a');
+            // Create a download link for the current image
+            link.href = image; // Use the current image state directly
+            link.download = `edited-image.${fileExtension}` // Define the filename
+            link.click();
+        } else {
+            console.error('No image found to download.');
+        }
+    };
+    
+    
   
   
   
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 ">
-            <h1 className="text-3xl font-bold text-gray-800 p-1">Image Cropper</h1>
+            <h1 className="text-3xl font-bold text-gray-800 p-1">Image Editor</h1>
             <input
                 type="file"
                 onChange={handleImageData}
@@ -129,11 +117,26 @@ const Mainpage = () => {
                     className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded transition disabled:opacity-50">
                     Redo
                 </button>
+
+
+                <select
+                    value={format}
+                    onChange={(e) => setFormat(e.target.value)}
+                    className="p-2 border rounded bg-white text-gray-800"
+                >
+                    <option value="png">PNG (if rotating)</option>
+                    <option value="jpg">JPG</option>
+                    <option value="webp">WEBP</option>
+                </select>
+
+
+
                 <button
                     onClick={handleDownload}
                     className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition">
                     Download
                 </button>
+                
             </div>
             <div className="mt-3 w-full flex flex-col items-center">
                 <label
