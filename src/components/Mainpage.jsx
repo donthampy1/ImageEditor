@@ -53,31 +53,48 @@ const Mainpage = () => {
         setPrevValue(sliderValue)
     }
     const handleDownload = () => {
-        if (image) {
-
+        const cropper = cropperRef.current?.cropper;
+        
+        if (cropper) {
+           // Get the original image element
+          const imageWidth = image.naturalWidth;
+          const imageHeight = image.naturalHeight;
+      
+          // Get the cropped canvas with natural width and height of the image
+          const canvas = cropper.getCroppedCanvas({
+            width: imageWidth,
+            height: imageHeight
+          });
+      
+          if (canvas) {
             let mimeType;
             let fileExtension;
-
+      
+            // Determine the format and set mimeType and fileExtension
             if (format === 'jpg') {
-                mimeType = 'image/jpeg';
-                fileExtension = 'jpg';
+              mimeType = 'image/jpeg';
+              fileExtension = 'jpg';
             } else if (format === 'webp') {
-                mimeType = 'image/webp';
-                fileExtension = 'webp';
+              mimeType = 'image/webp';
+              fileExtension = 'webp';
             } else {
-                mimeType = 'image/png';
-                fileExtension = 'png';
+              mimeType = 'image/png';
+              fileExtension = 'png';
             }
-
-            const link = document.createElement('a');
+      
             // Create a download link for the current image
-            link.href = image; // Use the current image state directly
-            link.download = `edited-image.${fileExtension}` // Define the filename
-            link.click();
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL(mimeType); // Get the image data URL from the canvas
+            link.download = `edited-image.${fileExtension}`; // Define the filename
+            link.click(); // Trigger the download
+          } else {
+            console.error('No canvas found to download.');
+          }
         } else {
-            console.error('No image found to download.');
+          console.error('No cropper instance found.');
         }
-    };
+      };
+      
     
     
   
@@ -122,7 +139,7 @@ const Mainpage = () => {
                 <select
                     value={format}
                     onChange={(e) => setFormat(e.target.value)}
-                    className="p-2 border rounded bg-white text-gray-800"
+                    className="p-2 border  rounded bg-white text-gray-800"
                 >
                     <option value="png">PNG (if rotating)</option>
                     <option value="jpg">JPG</option>
