@@ -53,45 +53,41 @@ const Mainpage = () => {
         setPrevValue(sliderValue)
     }
     const handleDownload = () => {
-        const cropper = cropperRef.current?.cropper;
+        const cropper = cropperRef.current?.cropper
         
         if (cropper) {
-           // Get the original image element
-          const imageWidth = image.naturalWidth;
-          const imageHeight = image.naturalHeight;
+          const imageWidth = image.naturalWidth
+          const imageHeight = image.naturalHeight
       
-          // Get the cropped canvas with natural width and height of the image
           const canvas = cropper.getCroppedCanvas({
             width: imageWidth,
             height: imageHeight
-          });
+          })
       
           if (canvas) {
-            let mimeType;
-            let fileExtension;
+            let mimeType
+            let fileExtension
       
-            // Determine the format and set mimeType and fileExtension
             if (format === 'jpg') {
-              mimeType = 'image/jpeg';
-              fileExtension = 'jpg';
+              mimeType = 'image/jpeg'
+              fileExtension = 'jpg'
             } else if (format === 'webp') {
-              mimeType = 'image/webp';
-              fileExtension = 'webp';
+              mimeType = 'image/webp'
+              fileExtension = 'webp'
             } else {
-              mimeType = 'image/png';
-              fileExtension = 'png';
+              mimeType = 'image/png'
+              fileExtension = 'png'
             }
       
-            // Create a download link for the current image
-            const link = document.createElement('a');
-            link.href = canvas.toDataURL(mimeType); // Get the image data URL from the canvas
-            link.download = `edited-image.${fileExtension}`; // Define the filename
-            link.click(); // Trigger the download
+            const link = document.createElement('a')
+            link.href = canvas.toDataURL(mimeType)
+            link.download = `edited-image.${fileExtension}`
+            link.click()
           } else {
-            console.error('No canvas found to download.');
+            console.error('No image found to download.')
           }
         } else {
-          console.error('No cropper instance found.');
+          console.error('no editing done .')
         }
       };
       
