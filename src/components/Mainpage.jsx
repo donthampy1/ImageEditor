@@ -91,6 +91,7 @@ const Mainpage = () => {
         }
       }
      const handleFilter = (filter) => {
+        setImage(imgarray[0])
     const cropper = cropperRef.current?.cropper;
     if (cropper) {
         // Get the original image dimensions
@@ -122,7 +123,7 @@ const Mainpage = () => {
             };
         }
     }
-};
+}
 
       
     
@@ -132,79 +133,85 @@ const Mainpage = () => {
   
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 ">
-            <h1 className="text-3xl font-bold text-gray-800 p-1">Image Editor</h1>
-            <input
-                type="file"
-                onChange={handleImageData}
-                className="mb-4 p-2 border rounded bg-white text-gray-800"
-            />
-            <div className="flex justify-center items-center bg-gray-200 p-4 rounded">
-                <Cropper
-                    ref={cropperRef}
-                    src={image}
-                    className="w-96 h-96"
-                />
-            </div>
-            <div className="flex justify-center items-center mt-4 gap-4">
-                <button
-                    onClick={handleCrop}
-                    className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition">
-                    Crop Image
-                </button>
-                <button
-                    onClick={handleUndo}
-                    disabled={arrnumber === 0}
-                    className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded transition disabled:opacity-50">
-                    Undo
-                </button>
-                <button
-                    onClick={handleRedo}
-                    disabled={arrnumber === imgarray.length - 1}
-                    className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded transition disabled:opacity-50">
-                    Redo
-                </button>
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+    <h1 className="text-3xl font-bold text-gray-800 p-1">Image Editor</h1>
+    <input
+        type="file"
+        onChange={handleImageData}
+        className="mb-4 p-2 border rounded bg-white text-gray-800"
+    />
+    <div className="flex justify-center items-center bg-gray-200 p-4 rounded">
+        <Cropper
+            ref={cropperRef}
+            src={image}
+            className="w-96 h-96"
+        />
+    </div>
+    <div className="flex justify-center items-center mt-4 gap-4">
+        <button
+            onClick={handleCrop}
+            className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded transition">
+            Crop Image
+        </button>
+        <button
+            onClick={handleUndo}
+            disabled={arrnumber === 0}
+            className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded transition disabled:opacity-50">
+            Undo
+        </button>
+        <button
+            onClick={handleRedo}
+            disabled={arrnumber === imgarray.length - 1}
+            className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded transition disabled:opacity-50">
+            Redo
+        </button>
+        <select
+            value={format}
+            onChange={(e) => setFormat(e.target.value)}
+            className="p-2 border rounded bg-white text-gray-800"
+        >
+            <option value="png">PNG (if rotating)</option>
+            <option value="jpg">JPG</option>
+            <option value="webp">WEBP</option>
+        </select>
+        <button
+            onClick={handleDownload}
+            className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition">
+            Download
+        </button>
+    </div>
 
+    <div className="mt-3 w-full flex flex-col items-center">
+        <label
+            htmlFor="slider"
+            className="mb-2 text-gray-700 font-medium">
+            Rotate Image ({sliderValue}°)
+        </label>
+        <input
+            id="slider"
+            type="range"
+            min="-180"
+            max="180"
+            value={sliderValue}
+            onChange={handleRotate}
+            className="w-3/4"
+        />
+    </div>
 
-                <select
-                    value={format}
-                    onChange={(e) => setFormat(e.target.value)}
-                    className="p-2 border  rounded bg-white text-gray-800"
-                >
-                    <option value="png">PNG (if rotating)</option>
-                    <option value="jpg">JPG</option>
-                    <option value="webp">WEBP</option>
-                </select>
+    {/* Container for the 9 filter buttons */}
+    <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex flex-col gap-3">
+        <button className='bg-slate-700 p-3 rounded-md' onClick={() => handleFilter('sepia(100%)')}>Apply Sepia</button>
+        <button className='bg-slate-700 p-3 rounded-md' onClick={() => handleFilter('grayscale(100%)')}>Apply Grayscale</button>
+        <button className='bg-slate-700 p-3 rounded-md' onClick={() => handleFilter('grayscale(100%) contrast(120%) brightness(90%)')}>B&W with Contrast</button>
+        <button className='bg-slate-700 p-3 rounded-md' onClick={() => handleFilter('sepia(80%) hue-rotate(-50deg) saturate(150%)')}>Autumn</button>
+        <button className='bg-slate-700 p-3 rounded-md' onClick={() => handleFilter('grayscale(100%) sepia(60%)')}>Grayscale + Sepia</button>
+        <button className='bg-slate-700 p-3 rounded-md' onClick={() => handleFilter('sepia(100%) hue-rotate(-30deg) saturate(120%)')}>Sepia + Autumn</button>
+        <button className='bg-slate-700 p-3 rounded-md' onClick={() => handleFilter('grayscale(100%) hue-rotate(-30deg) saturate(130%)')}>Grayscale + Autumn</button>
+        <button className='bg-slate-700 p-3 rounded-md' onClick={() => handleFilter('grayscale(100%) sepia(40%) contrast(120%) brightness(95%)')}>Sepia + B&W</button>
+        <button className='bg-slate-700 p-3 rounded-md' onClick={() => handleFilter('grayscale(100%) sepia(80%) hue-rotate(-40deg) saturate(150%)')}>Grayscale + Sepia + Autumn</button>
+    </div>
+</div>
 
-
-
-                <button
-                    onClick={handleDownload}
-                    className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded transition">
-                    Download
-                </button>
-                
-            </div>
-            <div className="mt-3 w-full flex flex-col items-center">
-                <label
-                    htmlFor="slider"
-                    className="mb-2 text-gray-700 font-medium">
-                    Rotate Image ({sliderValue}°)
-                </label>
-                <input
-                    id="slider"
-                    type="range"
-                    min="-180"
-                    max="180"
-                    value={sliderValue}
-                    onChange={handleRotate}
-                    className="w-3/4"
-                />
-            </div>
-            <button className='bg-slate-700 p-3 rounded-md' onClick={() => handleFilter('sepia(100%)')}> APPLY SEPIA</button>
-            <button className='bg-slate-700 p-3 rounded-md' onClick={() => handleFilter('grayscale(100%)')}> APPLY G</button>
-
-        </div>
     )
 }
 
