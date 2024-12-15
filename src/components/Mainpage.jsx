@@ -84,12 +84,46 @@ const Mainpage = () => {
             link.download = `edited-image.${fileExtension}`
             link.click()
           } else {
-            console.error('No image found to download.')
+            alert('No image found to download.')
           }
         } else {
           console.error('no editing done .')
         }
-      };
+      }
+     const handleFilter = (filter) => {
+    const cropper = cropperRef.current?.cropper;
+    if (cropper) {
+        // Get the original image dimensions
+        const imageWidth = cropper.getImageData().naturalWidth;
+        const imageHeight = cropper.getImageData().naturalHeight;
+
+        // Create a new canvas with the original image dimensions
+        const canvas = document.createElement('canvas');
+        canvas.width = imageWidth;
+        canvas.height = imageHeight;
+
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            // Apply the filter
+            ctx.filter = filter;
+
+            // Draw the original image onto the new canvas
+            const imageElement = new Image();
+            imageElement.src = image;
+            imageElement.onload = () => {
+                ctx.drawImage(imageElement, 0, 0, imageWidth, imageHeight);
+
+                // Convert the filtered canvas to a data URL
+                const filteredImageURL = canvas.toDataURL();
+
+                // Update the image and cropper
+                setImage(filteredImageURL);
+                cropper.replace(filteredImageURL);
+            };
+        }
+    }
+};
+
       
     
     
@@ -167,6 +201,9 @@ const Mainpage = () => {
                     className="w-3/4"
                 />
             </div>
+            <button className='bg-slate-700 p-3 rounded-md' onClick={() => handleFilter('sepia(100%)')}> APPLY SEPIA</button>
+            <button className='bg-slate-700 p-3 rounded-md' onClick={() => handleFilter('grayscale(100%)')}> APPLY G</button>
+
         </div>
     )
 }
